@@ -29,8 +29,8 @@ RL = PolicyGradient(
     reward_decay=0.99,
     # output_graph=True,
 )
-RL.load_model()
-for i_episode in range(500):
+# RL.load_model()
+for i_episode in range(200):
 
     observation = Myenv.reset()
     input_list = []
