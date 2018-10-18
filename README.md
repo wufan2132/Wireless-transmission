@@ -1,3 +1,3 @@
 # Wireless-transmission
 
-pull
+push
