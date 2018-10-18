@@ -7,7 +7,7 @@ Tensorflow: 1.0
 gym: 0.8.0
 """
 
-import gym
+import numpy as np
 from ReinforceLearning.brain.Policy_Gradient import PolicyGradient
 import matplotlib.pyplot as plt
 from ReinforceLearning.environment.env import env
@@ -30,39 +30,47 @@ RL = PolicyGradient(
     # output_graph=True,
 )
 RL.load_model()
-for i_episode in range(500):
+plt.figure(figsize=(10, 6), dpi=80)
+plt.ion()
+for i_episode in range(3000):
 
     observation = Myenv.reset()
     input_list = []
+    energy_list = []
     step = 0
+
     while True:
         # Myenv.render()
+
         input_list.append(Myenv.node.input)
+        energy_list.append(100*Myenv.node.energy/Myenv.node.max_energy)
         # RL choose action based on observation
         action = RL.choose_action(observation)
 
         observation_, reward, done = Myenv.step(action, Myenv.output_need[step])
 
         RL.store_transition(observation, action, reward)
-        step += 1
+
+        step+=1
         if done:
             ep_rs_sum = sum(RL.ep_rs)
 
             if 'running_reward' not in globals():
                 running_reward = ep_rs_sum
             else:
-                running_reward = running_reward * 0.9 + ep_rs_sum * 0.1
+                running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
 
             print("episode:", i_episode, "  reward:", int(running_reward), "   run_step:", Myenv.episode)
+            vt = RL.clear()
+            length = 1000
+            sub_axix = np.array(list(range(length)))
+            plt.cla()
+            plt.title('Result Analysis')
+            plt.plot(sub_axix, np.array(input_list[0:length]), color='green', label='input')
+            plt.plot(sub_axix, np.array(Myenv.output_need[0:length]), color='red', label='output')
+            plt.plot(sub_axix, np.array(energy_list[0:length]), color='blue', label='energy')
+            plt.legend()  # 显示图例
+            plt.pause(1)
 
-            vt = RL.learn()
-
-            if i_episode == 0:
-                plt.plot(vt)    # plot the episode vt
-                plt.xlabel('episode steps')
-                plt.ylabel('normalized state-action value')
-                plt.show()
             break
-
         observation = observation_
-RL.save_model()
