@@ -30,6 +30,7 @@ RL = PolicyGradient(
     # output_graph=True,
 )
 RL.load_model()
+RL.show_para()
 plt.figure(figsize=(10, 6), dpi=80)
 plt.ion()
 for i_episode in range(3000):

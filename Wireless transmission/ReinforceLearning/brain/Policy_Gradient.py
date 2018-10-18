@@ -50,7 +50,7 @@ class PolicyGradient:
             self.tf_acts = tf.placeholder(tf.int32, [None, ], name="actions_num")
             self.tf_vt = tf.placeholder(tf.float32, [None, ], name="actions_value")
         # fc1
-        layer = tf.layers.dense(
+        layer1 = tf.layers.dense(
             inputs=self.tf_obs,
             units=10,
             activation=tf.nn.tanh,  # tanh activation
@@ -58,9 +58,27 @@ class PolicyGradient:
             bias_initializer=tf.constant_initializer(0.1),
             name='fc1'
         )
-        # fc2
+        # # fc2
+        # layer2 = tf.layers.dense(
+        #     inputs=layer1,
+        #     units=16,
+        #     activation=tf.nn.tanh,  # tanh activation
+        #     kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.3),
+        #     bias_initializer=tf.constant_initializer(0.1),
+        #     name='fc2'
+        # )
+        # # fc3
+        # layer3 = tf.layers.dense(
+        #     inputs=layer2,
+        #     units=16,
+        #     activation=tf.nn.tanh,  # tanh activation
+        #     kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.3),
+        #     bias_initializer=tf.constant_initializer(0.1),
+        #     name='fc3'
+        # )
+        # fc4
         all_act = tf.layers.dense(
-            inputs=layer,
+            inputs=layer1,
             units=self.n_actions,
             activation=None,
             kernel_initializer=tf.random_normal_initializer(mean=0, stddev=0.3),
@@ -128,3 +146,27 @@ class PolicyGradient:
 
     def load_model(self,path='saved_model/policy_gradient.ckpt'):
         self.saver.restore(self.sess, path)
+
+    def show_para(self):
+        self.sess.run(tf.global_variables_initializer())
+        fc1_kernel = self.sess.run(tf.global_variables('fc1/kernel')[0])
+        print(fc1_kernel)
+        fc1_bias = self.sess.run(tf.global_variables('fc1/bias')[0])
+        print(fc1_bias)
+
+        fc2_kernel = self.sess.run(tf.global_variables('fc2/kernel')[0])
+        print(fc2_kernel)
+        fc2_bias = self.sess.run(tf.global_variables('fc2/bias')[0])
+        print(fc2_bias)
+
+        # fc3_kernel = self.sess.run(tf.global_variables('fc3/kernel')[0])
+        # print(fc3_kernel)
+        # fc3_bias = self.sess.run(tf.global_variables('fc3/bias')[0])
+        # print(fc3_bias)
+        #
+        # fc4_kernel = self.sess.run(tf.global_variables('fc4/kernel')[0])
+        # print(fc4_kernel)
+        # fc4_bias = self.sess.run(tf.global_variables('fc4/bias')[0])
+        # print(fc4_bias)
+
+        pass
