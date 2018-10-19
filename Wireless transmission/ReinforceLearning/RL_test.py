@@ -25,7 +25,7 @@ Myenv = env()
 RL = PolicyGradient(
     n_actions=Myenv.action_space_num,
     n_features=Myenv.obs_num,
-    learning_rate=0.1,
+    learning_rate=0.02,
     reward_decay=0.99,
     # output_graph=True,
 )
