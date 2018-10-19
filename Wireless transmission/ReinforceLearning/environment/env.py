@@ -19,6 +19,9 @@ class env():
         self.action_space_num = 3
         self.obs_num = 8
         self.last_reward = 0
+        self.last_energy_rate = 0
+        self.last_node_input = 0
+        self.last_node_output = 0
         # 其他
         self.last_ob = np.zeros([1, self.obs_num])
         self.episode = 0
@@ -56,8 +59,6 @@ class env():
             done = 0
         if self.episode > 9999:
             done = 1
-        if self.episode < 200:
-            self.last_reward = 0
         return ob, self.last_reward, done
 
     def reset(self):
@@ -71,23 +72,36 @@ class env():
         ob = np.append(ob, np.array([0, 30])).astype(np.float32)  #
         return ob
 
-    # def step(self, action, output_need):
-    #     if action == 0:
-    #         self.node.input += 1
-    #     elif action == 1:
-    #         pass
-    #     elif action ==2:
-    #         self.node.input -= 1
-    #     self.node.set_input(self.node.input)
-    #     self.node.new_output(1, output_need)
-    #     ret = self.node.run()
-    #     energy_rate = self.node.energy/self.node.max_energy
-    #     ob = np.array([energy_rate, self.aim_energy_rate, self.node.output[1]]).astype(np.float32)
-    #     if ret == 1:
-    #         reward = 100 - energy_rate * 100
-    #         done = 0
-    #     else:
-    #         reward = -10000
-    #         done = 1
-    #     info = 0
-    #     return ob, reward, done
+    def get_obs(self):
+        energy_rate = self.node.energy / self.node.max_energy
+        node_input = self.node.input
+        node_output = self.node.output[1]
+        # try:
+        #     if(energy_rate > self.last_energy_rate):
+        #         energy_rate_flag = 1
+        #     else:
+        #         energy_rate_flag = -1
+        # except:
+        #     energy_rate_flag = 0
+        #
+        # try:
+        #     if (node_input > self.last_node_input):
+        #         node_input_flag = 1
+        #     else:
+        #         node_input_flag = -1
+        # except:
+        #     node_input_flag = 0
+        #
+        # try:
+        #     if(energy_rate > self.last_node_output):
+        #         node_output_flag = 1
+        #     else:
+        #         node_output_flag = -1
+        # except:
+        #     node_output_flag = 0
+
+        ob =  np.array([energy_rate, node_input, node_output, self.last_energy_rate, self.last_node_input, self.last_node_output, 0, 30]).astype(np.float32)
+        self.last_energy_rate = energy_rate
+        self.last_node_input = node_input
+        self.last_node_output = node_output
+        return ob

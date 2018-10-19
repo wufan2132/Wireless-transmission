@@ -12,9 +12,9 @@ from ReinforceLearning.brain.Policy_Gradient import PolicyGradient
 import matplotlib.pyplot as plt
 from ReinforceLearning.environment.env import env
 
-DISPLAY_REWARD_THRESHOLD = 400  # renders environment if total episode reward is greater then this threshold
-RENDER = False  # rendering wastes time
 
+RENDER = False  # rendering wastes time
+MAX_REWARD = 0
 Myenv = env()
 
 # print(env.action_space)
@@ -25,12 +25,12 @@ Myenv = env()
 RL = PolicyGradient(
     n_actions=Myenv.action_space_num,
     n_features=Myenv.obs_num,
-    learning_rate=0.02,
+    learning_rate=0.1,
     reward_decay=0.99,
     # output_graph=True,
 )
-RL.load_model()
-for i_episode in range(500):
+# RL.load_model()
+for i_episode in range(200):
 
     observation = Myenv.reset()
     input_list = []
@@ -42,8 +42,8 @@ for i_episode in range(500):
         action = RL.choose_action(observation)
 
         observation_, reward, done = Myenv.step(action, Myenv.output_need[step])
-
-        RL.store_transition(observation, action, reward)
+        if step > 200:
+            RL.store_transition(observation, action, reward)
         step += 1
         if done:
             ep_rs_sum = sum(RL.ep_rs)
@@ -62,7 +62,11 @@ for i_episode in range(500):
                 plt.xlabel('episode steps')
                 plt.ylabel('normalized state-action value')
                 plt.show()
-            break
 
+            if running_reward > MAX_REWARD:
+                MAX_REWARD = running_reward
+                RL.save_model()
+            break
         observation = observation_
-RL.save_model()
+if MAX_REWARD == 0:
+    RL.save_model()
