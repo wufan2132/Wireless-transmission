@@ -26,7 +26,7 @@ RL = PolicyGradient(
     n_actions=Myenv.action_space_num,
     n_features=Myenv.obs_num,
     learning_rate=0.02,
-    reward_decay=0.99,
+    reward_decay=1,
     # output_graph=True,
 )
 RL.load_model()
@@ -48,9 +48,8 @@ for i_episode in range(3000):
         action = RL.choose_action(observation)
 
         observation_, reward, done = Myenv.step(action, Myenv.output_need[step])
-
-        RL.store_transition(observation, action, reward)
-
+        if step > 200:
+            RL.store_transition(observation, action, reward)
         step+=1
         if done:
             ep_rs_sum = sum(RL.ep_rs)
@@ -58,17 +57,19 @@ for i_episode in range(3000):
             if 'running_reward' not in globals():
                 running_reward = ep_rs_sum
             else:
-                running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
+                # running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
+                running_reward = ep_rs_sum
 
             print("episode:", i_episode, "  reward:", int(running_reward), "   run_step:", Myenv.episode)
             vt = RL.clear()
             length = 1000
+            start = 3000
             sub_axix = np.array(list(range(length)))
             plt.cla()
             plt.title('Result Analysis')
-            plt.plot(sub_axix, np.array(input_list[0:length]), color='green', label='input')
-            plt.plot(sub_axix, np.array(Myenv.output_need[0:length]), color='red', label='output')
-            plt.plot(sub_axix, np.array(energy_list[0:length]), color='blue', label='energy')
+            plt.plot(sub_axix, np.array(input_list[start:start+length]), color='green', label='input')
+            plt.plot(sub_axix, np.array(Myenv.output_need[start:start+length]), color='red', label='output')
+            plt.plot(sub_axix, np.array(energy_list[start:start+length]), color='blue', label='energy')
             plt.legend()  # 显示图例
             plt.pause(1)
 
