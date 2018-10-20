@@ -4,6 +4,8 @@ import numpy as np
 
 
 class env():
+    action_space_num = 3
+    obs_num = 8
     def __init__(self, point=None):
         # 初始化单个节点
         if point is None:
@@ -34,12 +36,15 @@ class env():
 
     def step(self, action, output_need=None):
         self.episode += 1
-        if action == 0:
-            self.node.input += 1
-        elif action == 1:
-            pass
-        elif action == 2:
-            self.node.input -= 1
+        if isinstance(action, int):
+            if action == 0:
+                self.node.input += 1
+            elif action == 1:
+                pass
+            elif action == 2:
+                self.node.input -= 1
+        else:
+            self.node.input = action
         self.node.set_input(self.node.input)
         if output_need is not None:
             self.node.new_output(1, output_need)

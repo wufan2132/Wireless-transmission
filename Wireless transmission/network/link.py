@@ -48,6 +48,8 @@ def get_distance(start_node, end_node):
     distence_weight = (start_node.posX - end_node.posX) * (start_node.posX - end_node.posX) \
                       + (start_node.posY - end_node.posY) * (start_node.posY - end_node.posY)
     return distence_weight
+
+
 def get_distance_for_id(start_node_id, end_node_id):
     return get_distance(point.point_dict[start_node_id], point.point_dict[end_node_id])
 

@@ -35,7 +35,7 @@ class point(node.node):
         self.env = env(self)
 
     def change_event(self):
-        self.comfirm_input()
+        # self.comfirm_input()
         if link.link_list.get((self.input_id, self.id)) is None:
             return
         else:

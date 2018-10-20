@@ -4,7 +4,7 @@ import numpy as np
 output_dict = {}
 
 
-def output_init(point_dict):
+def init(point_dict):
     for id in point_dict:
         if point_dict[id].name == '移动节点':
             # 为所有末端节点绑定一个输出源
@@ -12,7 +12,7 @@ def output_init(point_dict):
             output = output_dict[id].run()
             point_dict[id].new_output(-1, output)
 
-def output_run(point_dict):
+def run(point_dict):
     for id in output_dict:
         output = output_dict[id].run()
         point_dict[id].new_output(-1, output)
