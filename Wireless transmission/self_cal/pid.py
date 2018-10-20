@@ -1,3 +1,7 @@
+
+PID_SETPOINT = 0.8
+
+
 class PID():
     def __init__(self, p, i, d, I_limit):
         self.p = p
@@ -27,3 +31,10 @@ class PID():
         if Error != 0 and self.p != 0:
             pError = Error * self.p
         return pError + self.sum_err + dError
+
+    def choose_action(self, obs):
+        energy_rate, output = obs
+        self.setPoint = PID_SETPOINT
+        self.feedback = energy_rate
+        input_ = self.run() + output
+        return input_

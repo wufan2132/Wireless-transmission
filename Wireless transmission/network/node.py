@@ -1,5 +1,5 @@
 class node(object):
-    def __init__(self,max_energy,max_input,max_output):
+    def __init__(self, max_energy, max_input, max_output):
         self.max_energy = max_energy
         self.max_input = max_input
         self.max_output = max_output
@@ -9,16 +9,16 @@ class node(object):
         self.energy = 0
         self.link = None
 
-    def set_status(self,energy,input,output):
+    def set_status(self, energy, input, output):
         self.energy = energy
         self.input = input
         self.output = output
         self.sum_output = sum(list(self.output.values()))
 
-    def set_energy(self,energy_Percent):
+    def set_energy(self, energy_Percent):
         percent = 0
         if energy_Percent[-1] == '%':
-            percent = 0.01*int(energy_Percent[0:-1])
+            percent = 0.01 * int(energy_Percent[0:-1])
         else:
             return
         self.energy = percent * self.max_energy
@@ -34,7 +34,7 @@ class node(object):
             self.energy += d_energy
         return 1, 0
 
-    def set_input(self,input):
+    def set_input(self, input):
         if input > self.max_input:
             self.input = self.max_input
             return 0
@@ -45,7 +45,7 @@ class node(object):
             self.input = input
             return 1
 
-    def new_output(self,aim_id,output):
+    def new_output(self, aim_id, output):
         # 如果没有就新建一个
         if self.output.get(aim_id) is None:
             if self.sum_output + output > self.max_output:
@@ -62,14 +62,12 @@ class node(object):
                 self.sum_output = sum(list(self.output.values()))
                 return 1
 
-
     def clear_link(self):
         self.output = []
         self.sum_output = sum(list(self.output.values()))
 
     def comfirm_input(self):
         self.input = self.sum_output
-
 
     # def set_output(self,output):
     #     self.sum_output = sum(self.output)
@@ -82,5 +80,3 @@ class node(object):
     #     else:
     #         self.output = output
     #         return 1
-
-

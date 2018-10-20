@@ -4,14 +4,16 @@ import numpy as np
 
 
 class env():
-    def __init__(self):
+    def __init__(self, point=None):
         # 初始化单个节点
-        self.node = node(500, 30, 1000)  # max_energy, max_input, max_output
-        self.node.set_energy("65%")
-        self.node.output[1] = 0
+        if point is None:
+            self.node = node(800, 30, 1000)  # max_energy, max_input, max_output
+            self.node.set_energy("65%")
+        else:
+            self.node = point
         self.aim_energy_rate = 0.8
         # 初始化输入信息
-        self.output_need = [20 + 20 * math.sin(x * 0.031415926) for x in range(1, 20001)] #周期为200, 50
+        self.output_need = [20 + 20 * math.sin(x * 0.031415926) for x in range(1, 20001)]  # 周期为200, 50
         self.input_list = []
         self.energy_list = []
         self.output_value_list = []
@@ -28,9 +30,9 @@ class env():
 
     def render(self):
         print("energy:", float(self.node.energy / self.node.max_energy), " input:", self.node.input,
-              " output:",self.node.output[1], " reward:", self.last_reward)
+              " output:", self.node.output[1], " reward:", self.last_reward)
 
-    def step(self, action, output_need):
+    def step(self, action, output_need=None):
         self.episode += 1
         if action == 0:
             self.node.input += 1
@@ -39,22 +41,19 @@ class env():
         elif action == 2:
             self.node.input -= 1
         self.node.set_input(self.node.input)
-        self.node.new_output(1, output_need)
+        if output_need is not None:
+            self.node.new_output(1, output_need)
         ret, value = self.node.run()
-        energy_rate = self.node.energy / self.node.max_energy
-        _ob = np.array([10*energy_rate, self.node.input, self.node.output[1]]).astype(np.float32)
-        ob = np.append(_ob, self.last_ob)
-        ob = np.append(ob, np.array([0,30])).astype(np.float32)#
-        self.last_ob = _ob
+        ob = self.get_obs()
 
         # reward = -0.1*(self.node.input-output_need)*(self.node.input-output_need)
-        if ret == 1: # 正常情况
-            self.last_reward = 1-energy_rate
+        if ret == 1:  # 正常情况
+            self.last_reward = 1 - self.node.energy / self.node.max_energy
             done = 0
-        elif ret == 0: # 不够了
-            self.last_reward = 100*value
+        elif ret == 0:  # 不够了
+            self.last_reward = 100 * value
             done = 0
-        else: # 满了
+        else:  # 满了
             self.last_reward = -value
             done = 0
         if self.episode > 9999:
@@ -65,17 +64,14 @@ class env():
         self.episode = 0
         self.node.set_energy("65%")
         self.node.set_input(self.output_need[0])
-        energy_rate = self.node.energy / self.node.max_energy
-        _ob = np.array([10*energy_rate, self.node.input, self.node.output[1]]).astype(np.float32)
-        self.last_ob = _ob
-        ob = np.append(_ob, _ob)
-        ob = np.append(ob, np.array([0, 30])).astype(np.float32)  #
+        self.get_obs()
+        ob = self.get_obs()
         return ob
 
     def get_obs(self):
-        energy_rate = self.node.energy / self.node.max_energy
+        energy_rate = 10*self.node.energy / self.node.max_energy
         node_input = self.node.input
-        node_output = self.node.output[1]
+        node_output = self.node.sum_output
         # try:
         #     if(energy_rate > self.last_energy_rate):
         #         energy_rate_flag = 1
@@ -100,7 +96,9 @@ class env():
         # except:
         #     node_output_flag = 0
 
-        ob =  np.array([energy_rate, node_input, node_output, self.last_energy_rate, self.last_node_input, self.last_node_output, 0, 30]).astype(np.float32)
+        ob = np.array(
+            [energy_rate, node_input, node_output, self.last_energy_rate, self.last_node_input, self.last_node_output,
+             0, 30]).astype(np.float32)
         self.last_energy_rate = energy_rate
         self.last_node_input = node_input
         self.last_node_output = node_output

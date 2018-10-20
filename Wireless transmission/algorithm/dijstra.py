@@ -13,11 +13,6 @@ def run():
         link_path(path_message)
         point.point_dict[p_id].change_event()
 
-
-
-
-
-
 def find_min_path(aim_id):
     # edgedict = {}
     # # 初始化权值
@@ -61,17 +56,6 @@ def link_path(path_message):
                 link.link_list[(path_message[1][i], path_message[1][i + 1])] = l
             # else:
             #     link.link_list[(path_message[1][i], path_message[1][i + 1])] = l
-
-
-
-
-
-
-
-
-
-
-
 
 def init():
     # edgedict = {}

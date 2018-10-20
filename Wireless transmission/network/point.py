@@ -1,4 +1,5 @@
 from network import node, link
+from ReinforceLearning.environment.env import env
 
 # 最大储量 输入功率 输出功率
 point_para = {"指挥中心": [99999, 0, 1000],
@@ -7,12 +8,13 @@ point_para = {"指挥中心": [99999, 0, 1000],
 
 point_dict = {}
 
+
 class point(node.node):
     def __init__(self, initlist):
         # initlist 0:序号 1:类型 2:能源储量 3:坐标X 4:坐标Y 5:output 6:input
         self.id = int(initlist[0])
         self.name = initlist[1]
-        energy = 1.0 * initlist[2] * point_para[self.name][2]
+        energy = 0.01 * initlist[2] * point_para[self.name][0]
         self.posX = initlist[3]
         self.posY = initlist[4]
         output = {}
@@ -29,6 +31,9 @@ class point(node.node):
         # 其他属性
         self.input_id = None
 
+    def set_env(self):
+        self.env = env(self)
+
     def change_event(self):
         self.comfirm_input()
         if link.link_list.get((self.input_id, self.id)) is None:
@@ -36,6 +41,3 @@ class point(node.node):
         else:
             link.link_list[(self.input_id, self.id)].change_event()
             return
-
-
-
