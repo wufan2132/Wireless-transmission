@@ -16,11 +16,11 @@ from method.myfunc import smooth
 DISPLAY_REWARD_THRESHOLD = 400  # renders environment if total episode reward is greater then this threshold
 RENDER = False  # rendering wastes time
 
-Myenv = env()
+Myenv = env(max_energy=500)
 output = output_generator(scale=20, bias=20,
-                 period=200, phase=0,
+                 period=100, phase=100,
                  max_iter=20000)
-output.load("imagedata.npy")
+# output.load("imagedata.npy")
 Myenv.output_need = output.output
 # print(env.action_space)
 # print(env.observation_space)
@@ -34,7 +34,7 @@ RL = PolicyGradient(
     reward_decay=1,
     # output_graph=True,
 )
-RL.load_model()
+RL.load_model(path='saved_model/PG - 1/policy_gradient.ckpt')
 plt.figure(figsize=(10, 6), dpi=80)
 plt.ion()
 for i_episode in range(3000):
@@ -76,8 +76,8 @@ for i_episode in range(3000):
             plt.cla()
             plt.title('Result Analysis')
             plt.plot(sub_axix, np.array(input_list[start:start+length]), color='green', label='input')
-            plt.plot(sub_axix, np.array(output_value[start:start + length]), color='orange', label='output')
-            plt.plot(sub_axix, np.array(Myenv.output_need[start:start + length]), color='red', label='output_need')
+            plt.plot(sub_axix, np.array(output_value[start:start + length]), 'c', label='output')
+            plt.plot(sub_axix, np.array(Myenv.output_need[start:start + length]), 'r-.', label='output_need')
             plt.plot(sub_axix, np.array(energy_list[start:start+length]), color='blue', label='energy')
             plt.legend()  # 显示图例
             plt.pause(1)

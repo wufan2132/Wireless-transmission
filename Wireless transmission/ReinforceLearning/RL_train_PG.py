@@ -11,12 +11,16 @@ import gym
 from ReinforceLearning.brain.Policy_Gradient import PolicyGradient
 import matplotlib.pyplot as plt
 from ReinforceLearning.environment.env import env
-
+from simulation.output_generator import output_generator
 
 RENDER = False  # rendering wastes time
 MAX_REWARD = 0
-Myenv = env()
-
+Myenv = env(max_energy=500)
+output = output_generator(scale=20, bias=20,
+                 period=200, phase=0,
+                 max_iter=20000)
+# output.load("imagedata.npy")
+Myenv.output_need = output.output
 # print(env.action_space)
 # print(env.observation_space)
 # print(env.observation_space.high)
@@ -27,9 +31,9 @@ RL = PolicyGradient(
     n_features=Myenv.obs_num,
     learning_rate=0.02,
     reward_decay=0.99,
-    # output_graph=True,
+    output_graph=True,
 )
-RL.load_model()
+RL.load_model(path='saved_model/PG - 1/policy_gradient.ckpt')
 for i_episode in range(200):
 
     observation = Myenv.reset()
@@ -65,8 +69,8 @@ for i_episode in range(200):
 
             if running_reward > MAX_REWARD:
                 MAX_REWARD = running_reward
-                RL.save_model()
+                RL.save_model(path='saved_model/PG - 1/policy_gradient.ckpt')
             break
         observation = observation_
 if MAX_REWARD == 0:
-    RL.save_model()
+    RL.save_model(path='saved_model/PG - 1/policy_gradient.ckpt')

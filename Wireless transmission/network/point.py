@@ -4,7 +4,7 @@ from ReinforceLearning.environment.env import env
 # 最大储量 输入功率 输出功率
 point_para = {"指挥中心": [99999, 0, 1000],
               "固定节点": [2000, 300, 300],
-              "移动节点": [500, 100, 100]}
+              "移动节点": [500, 30, 100]}  # [500,30,100]
 
 point_dict = {}
 
@@ -14,13 +14,13 @@ class point(node.node):
         # initlist 0:序号 1:类型 2:能源储量 3:坐标X 4:坐标Y 5:output 6:input
         self.id = int(initlist[0])
         self.name = initlist[1]
-        energy = 0.01 * initlist[2] * point_para[self.name][0]
-        self.posX = initlist[3]
-        self.posY = initlist[4]
+        energy = 0.01 * float(initlist[2]) * point_para[self.name][0]
+        self.posX = int(initlist[3])
+        self.posY = int(initlist[4])
         output = {}
-        if initlist[5] != 0:
-            output[-1] = initlist[5]
-        input = initlist[6]
+        if float(initlist[5]) != 0:
+            output[0] = float(initlist[5])
+        input = float(initlist[6])
 
         super(point, self).__init__(point_para[self.name][0],
                                     point_para[self.name][1],

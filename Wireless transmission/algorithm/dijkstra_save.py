@@ -6,8 +6,9 @@ shortest_list = {}
 make_list = {}
 
 def run():
+    link.clear()
     point_dict = point.point_dict.copy()
-    sorted(point_dict, key=lambda p: point_dict[p].input)
+    sorted(point_dict, key=lambda p: point_dict[p].input, reverse=True)
     for p_id in point.point_dict:
         path_message = find_min_path(p_id)
         link_path(path_message)
@@ -56,6 +57,7 @@ def link_path(path_message):
                 link.link_list[(path_message[1][i], path_message[1][i + 1])] = l
             # else:
             #     link.link_list[(path_message[1][i], path_message[1][i + 1])] = l
+
 
 def init():
     run()

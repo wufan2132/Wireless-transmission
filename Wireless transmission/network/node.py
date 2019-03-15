@@ -56,6 +56,7 @@ class node(object):
                 return 1
         else:  # 如果有就在原来的基础上改变
             if self.sum_output + output - self.output[aim_id] > self.max_output:
+                self.output[aim_id] = self.max_output - self.sum_output
                 return 0
             else:
                 self.output[aim_id] = output

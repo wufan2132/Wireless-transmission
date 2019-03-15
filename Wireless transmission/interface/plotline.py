@@ -8,3 +8,11 @@ def draw(input, output_need, output_value, energy_rate):
     plt.plot(x_axix, energy_rate, color='red', label='energy_rate')
     plt.legend()  # 显示图例
     plt.show()
+
+
+class plot():
+    def __init__(self, refresh=True):
+        self.refresh = refresh
+        plt.figure(figsize=(10, 6), dpi=80)
+        if self.refresh:
+            plt.ion()

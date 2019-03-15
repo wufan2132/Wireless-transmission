@@ -8,33 +8,21 @@ gym: 0.8.0
 """
 
 import numpy as np
-from ReinforceLearning.brain.Policy_Gradient import PolicyGradient
+from self_cal.pid import PID
 import matplotlib.pyplot as plt
 from ReinforceLearning.environment.env import env
-from simulation.output_generator import output_generator
-from method.myfunc import smooth
+
 DISPLAY_REWARD_THRESHOLD = 400  # renders environment if total episode reward is greater then this threshold
 RENDER = False  # rendering wastes time
 
 Myenv = env()
-output = output_generator(scale=20, bias=20,
-                 period=200, phase=0,
-                 max_iter=20000)
-output.load("imagedata.npy")
-Myenv.output_need = output.output
+
 # print(env.action_space)
 # print(env.observation_space)
 # print(env.observation_space.high)
 # print(env.observation_space.low)
 
-RL = PolicyGradient(
-    n_actions=Myenv.action_space_num,
-    n_features=Myenv.obs_num,
-    learning_rate=0.02,
-    reward_decay=1,
-    # output_graph=True,
-)
-RL.load_model()
+pid_brain = PID(100, 0.1, 1, 100)
 plt.figure(figsize=(10, 6), dpi=80)
 plt.ion()
 for i_episode in range(3000):
@@ -42,7 +30,6 @@ for i_episode in range(3000):
     observation = Myenv.reset()
     input_list = []
     energy_list = []
-    output_value = []
     step = 0
 
     while True:
@@ -51,33 +38,19 @@ for i_episode in range(3000):
         input_list.append(Myenv.node.input)
         energy_list.append(100*Myenv.node.energy/Myenv.node.max_energy)
         # RL choose action based on observation
-        action = RL.choose_action(observation)
+        action = pid_brain.choose_action(observation)
 
         observation_, reward, done = Myenv.step(action, Myenv.output_need[step])
 
-        output_value.append(Myenv.node.output[0])
-        if step > 200:
-            RL.store_transition(observation, action, reward)
         step+=1
         if done:
-            ep_rs_sum = sum(RL.ep_rs)
-
-            if 'running_reward' not in globals():
-                running_reward = ep_rs_sum
-            else:
-                # running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
-                running_reward = ep_rs_sum
-            smooth(input_list)
-            print("episode:", i_episode, "  reward:", int(running_reward), "   run_step:", Myenv.episode)
-            vt = RL.clear()
-            length = 720
-            start = 0
+            length = 1000
+            start = 3000
             sub_axix = np.array(list(range(length)))
             plt.cla()
             plt.title('Result Analysis')
             plt.plot(sub_axix, np.array(input_list[start:start+length]), color='green', label='input')
-            plt.plot(sub_axix, np.array(output_value[start:start + length]), color='orange', label='output')
-            plt.plot(sub_axix, np.array(Myenv.output_need[start:start + length]), color='red', label='output_need')
+            plt.plot(sub_axix, np.array(Myenv.output_need[start:start+length]), color='red', label='output')
             plt.plot(sub_axix, np.array(energy_list[start:start+length]), color='blue', label='energy')
             plt.legend()  # 显示图例
             plt.pause(1)

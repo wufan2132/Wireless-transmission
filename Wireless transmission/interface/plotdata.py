@@ -18,7 +18,7 @@ def draw():
     color = [color_dict[point.point_dict[p].name] for p in point.point_dict]
     size = [size_dict[point.point_dict[p].name] for p in point.point_dict]
     label = {p:str(p) for p in point.point_dict}
-    edge = [l for l in link.link_list]
+    edge = [(link.link_list[l].start_node_id,l)  for l in link.link_list]
     G.add_nodes_from(id)
     G.add_edges_from(edge)
 

@@ -6,11 +6,11 @@ import numpy as np
 class env():
     action_space_num = 3
     obs_num = 8
-    def __init__(self, point=None):
+    def __init__(self, point=None,max_energy=500,max_input=30,max_output=1000,energy="95%"):
         # 初始化单个节点
         if point is None:
-            self.node = node(800, 30, 1000)  # max_energy, max_input, max_output
-            self.node.set_energy("65%")
+            self.node = node(max_energy, max_input, max_output)  # max_energy, max_input, max_output
+            self.node.set_energy(energy)
         else:
             self.node = point
         self.aim_energy_rate = 0.8
@@ -47,7 +47,7 @@ class env():
             self.node.input = action
         self.node.set_input(self.node.input)
         if output_need is not None:
-            self.node.new_output(1, output_need)
+            self.node.new_output(0, output_need)
         ret, value = self.node.run()
         ob = self.get_obs()
 
@@ -57,9 +57,13 @@ class env():
             done = 0
         elif ret == 0:  # 不够了
             self.last_reward = 100 * value
+            if self.node.output.get(0):
+                self.node.output[0] = self.node.output[0] + 10*value
             done = 0
         else:  # 满了
             self.last_reward = -value
+            if self.node.output.get(0):
+                self.node.output[0] = self.node.output[0] + 10*value
             done = 0
         if self.episode > 9999:
             done = 1

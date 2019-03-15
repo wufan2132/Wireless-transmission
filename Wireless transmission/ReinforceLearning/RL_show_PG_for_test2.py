@@ -34,7 +34,7 @@ RL = PolicyGradient(
     reward_decay=1,
     # output_graph=True,
 )
-RL.load_model()
+RL.load_model(path='saved_model/PG - 2/policy_gradient.ckpt')
 plt.figure(figsize=(10, 6), dpi=80)
 plt.ion()
 for i_episode in range(3000):
@@ -75,10 +75,10 @@ for i_episode in range(3000):
             sub_axix = np.array(list(range(length)))
             plt.cla()
             plt.title('Result Analysis')
-            plt.plot(sub_axix, np.array(input_list[start:start+length]), color='green', label='input')
-            plt.plot(sub_axix, np.array(output_value[start:start + length]), color='orange', label='output')
-            plt.plot(sub_axix, np.array(Myenv.output_need[start:start + length]), color='red', label='output_need')
-            plt.plot(sub_axix, np.array(energy_list[start:start+length]), color='blue', label='energy')
+            plt.plot(sub_axix, np.array(input_list[start:start + length]), color='green', label='input')
+            plt.plot(sub_axix, np.array(output_value[start:start + length]), 'c', label='output')
+            plt.plot(sub_axix, np.array(Myenv.output_need[start:start + length]), 'r-.', label='output_need')
+            plt.plot(sub_axix, np.array(energy_list[start:start + length]), color='blue', label='energy')
             plt.legend()  # 显示图例
             plt.pause(1)
 

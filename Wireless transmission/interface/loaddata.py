@@ -1,16 +1,20 @@
-import xlrd
+import csv
 from network import point
+from network import link
 
 
 def read(filename):
-    workbook = xlrd.open_workbook(filename)
-    table = workbook.sheet_by_index(0)
-    rows = table.nrows
-    cols = table.ncols
-    for i in range(1,rows):
-        list = table.row_values(i)
-        p = point.point(list)
+    workbook = csv.reader(open(filename, 'r'))
+    head_row = next(workbook)
+    for rows in workbook:
+        p = point.point(rows)
         point.point_dict[p.id] = p
 
 
-
+def write(filename):
+    f = open(filename, 'a', newline="")
+    f.seek(0)
+    f.truncate()  # 清空文件
+    csv_write = csv.writer(f)
+    for i, l in enumerate(link.link_list):
+        csv_write.writerow([i+1, link.link_list[l].start_node_id+1, link.link_list[l].end_node_id+1])

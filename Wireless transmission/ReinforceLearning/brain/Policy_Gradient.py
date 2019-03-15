@@ -40,7 +40,7 @@ class PolicyGradient:
             # $ tensorboard --logdir=logs
             # http://0.0.0.0:6006/
             # tf.train.SummaryWriter soon be deprecated, use following
-            tf.summary.FileWriter("logs/", self.sess.graph)
+            tf.summary.FileWriter("saved_model/logs/", self.sess.graph)
 
         self.sess.run(tf.global_variables_initializer())
 
@@ -92,14 +92,14 @@ class PolicyGradient:
     def choose_action(self, observation):
         prob_weights = self.sess.run(self.all_act_prob, feed_dict={self.tf_obs: observation[np.newaxis, :]})
         action = np.random.choice(range(prob_weights.shape[1]), p=prob_weights.ravel())  # select action w.r.t the actions prob
-        return action
+        return int(action)
 
     def store_transition(self, s, a, r):
         self.ep_obs.append(s)
         self.ep_as.append(a)
         self.ep_rs.append(r)
 
-    def  learn(self):
+    def learn(self):
         # discount and normalize episode reward
         discounted_ep_rs_norm = self._discount_and_norm_rewards()
 

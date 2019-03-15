@@ -37,4 +37,4 @@ class PID:
         self.setPoint = PID_SETPOINT
         self.feedback = energy_rate
         input_ = self.run() + output
-        return input_
+        return float(input_)
